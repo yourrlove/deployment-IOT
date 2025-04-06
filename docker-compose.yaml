@@ -1,0 +1,33 @@
+services:
+  backend:
+    image: nhatanh2708/face-api:latest
+    container_name: backend
+    restart: unless-stopped
+    volumes:
+      - ./config/database.db:/config/database.db
+      - ./public/uploads:/public/uploads
+      - ./public/process:/public/process
+      - ./public/histories:/public/histories
+    ports:
+      - ${PORT}:${PORT}
+    env_file:
+      - .env
+    networks:
+      - app-networks
+
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: mqtt-broker
+    restart: unless-stopped
+    ports:
+      - "1883:1883"   # MQTT protocol
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    networks:
+      - app-networks
+
+networks:
+  app-networks:
+    driver: bridge
